@@ -2,7 +2,6 @@
 [![Build Status](https://github.com/KyungsuKim42/tokensynth/actions/workflows/test_and_publish.yml/badge.svg)](https://github.com/KyungsuKim42/tokensynth/actions)
 [![PyPI version](https://img.shields.io/pypi/v/tokensynth.svg)](https://pypi.org/project/tokensynth/)
 [![License](https://img.shields.io/pypi/l/tokensynth.svg)](https://github.com/KyungsuKim42/tokensynth/blob/main/LICENSE)
-[![Downloads](https://pepy.tech/badge/tokensynth)](https://pepy.tech/project/tokensynth)
 ![Description](media/figure.png)
 
 <div align="center">
