@@ -8,7 +8,7 @@ midi = "media/input_midi.mid"
 
 # Initialize models
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-synth = TokenSynth.from_pretrained(aug=True)
+synth = TokenSynth.from_pretrained(aug=True, device=device)
 clap = CLAP(device=device)
 decoder = DACDecoder(device=device)
 
