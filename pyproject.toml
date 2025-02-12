@@ -1,0 +1,37 @@
+[project]
+name = "tokensynth"
+version = "0.0.1"
+description = "tokensynth"
+authors = [
+    {name = "Kyungsu Kim", email = "kyungsu.kim@snu.ac.kr"},
+]
+dependencies = [
+    "audiofile",
+    "appdirs",
+    "descript-audio-codec",
+    "huggingface-hub",
+    "laion-clap==1.1.6",
+    "librosa",
+    "numpy",
+    "pretty-midi",
+    "pytest",
+    "setuptools",
+    "torch>=2.0.0,<2.6.0",
+    "torchaudio>=2.0.0",
+    "torchvision>=0.15.0",
+    "tqdm",
+    "transformers",
+]
+requires-python = ">=3.10"
+readme = "README_pypi.md"
+license = {text = "MIT"}
+
+[build-system]
+requires = ["pdm-backend"]
+build-backend = "pdm.backend"
+
+[tool.pdm]
+distribution = true
+
+[project.urls]
+Repository = "https://github.com/KyungsuKim42/tokensynth"
