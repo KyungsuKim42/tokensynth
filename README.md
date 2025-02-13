@@ -1,18 +1,20 @@
 # TokenSynth: A Token-based Neural Synthesizer for Instrument Cloning and Text-to-Instrument
-[![Build Status](https://github.com/KyungsuKim42/tokensynth/actions/workflows/test_and_publish.yml/badge.svg)](https://github.com/KyungsuKim42/tokensynth/actions)
-[![PyPI version](https://img.shields.io/pypi/v/tokensynth.svg)](https://pypi.org/project/tokensynth/)
-[![License](https://img.shields.io/pypi/l/tokensynth.svg)](https://github.com/KyungsuKim42/tokensynth/blob/main/LICENSE)
 ![Description](media/figure.png)
 
 <div align="center">
+
+[![Build Status](https://github.com/KyungsuKim42/tokensynth/actions/workflows/test_and_publish.yml/badge.svg)](https://github.com/KyungsuKim42/tokensynth/actions)
+[![PyPI version](https://img.shields.io/pypi/v/tokensynth.svg)](https://pypi.org/project/tokensynth/)
+[![License](https://img.shields.io/pypi/l/tokensynth.svg)](https://github.com/KyungsuKim42/tokensynth/blob/main/LICENSE)
 
 [Kyungsu Kim](https://scholar.google.com/citations?user=bCMZWFIAAAAJ&hl=en&oi=sra), [Junghyun Koo](https://scholar.google.com/citations?user=9LbxECcAAAAJ&hl=en), [Sungho Lee](https://scholar.google.com/citations?hl=en&user=8yMXL5AAAAAJ), [Haesun Joung](https://scholar.google.com/citations?hl=en&user=yV8xVKoAAAAJ), [Kyogu Lee](https://scholar.google.com/citations?user=Fk4jQFEAAAAJ&hl=en)
 
 📄 Paper (In Press) | 🎵 [Demo Page](http://tinyurl.com/tokensynth-demo)
 
+
 </div>
 
-This is the **official implementation** of "TokenSynth: A Token-based Neural Synthesizer for Instrument Cloning and Text-to-Instrument", accepted to **ICASSP 2025** (in press).
+###  **Official implementation** of "TokenSynth: A Token-based Neural Synthesizer for Instrument Cloning and Text-to-Instrument", accepted to **ICASSP 2025** (to be published).
 
 TokenSynth is a token-based neural synthesizer that generates polyphonic single-instrument musical audio from MIDI and timbre embeddings, enabling instrument cloning, text-to-instrument synthesis, and timbre manipulation. It uses a decoder-only transformer trained on neural audio tokens with CLAP-based timbre conditioning, allowing for flexible sound design without fine-tuning.
 
@@ -76,3 +78,10 @@ Kyungsu Kim, Junghyun Koo, Sungho Lee, Haesun Joung, Kyogu Lee.
 TokenSynth: A Token-Based Neural Synthesizer for Instrument Cloning and Text-to-Instrument.
 GitHub repository, 2024. Available at: https://github.com/kyungsukim42/tokensynth
 ```
+
+## LICENSE
+
+This project is released under the [MIT License](./LICENSE)
+
+### Acknowledgements:
+This work utilizes codebase and pretrained weights of [DAC](https://github.com/descriptinc/descript-audio-codec) and [CLAP](https://github.com/LAION-AI/CLAP).
