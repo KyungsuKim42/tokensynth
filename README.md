@@ -75,6 +75,7 @@ If you want to manually download the weights, you can find them here:
 
 ## Citation
 
+```bibtex
 @misc{kim2025tokensynthtokenbasedneuralsynthesizer,
       title={TokenSynth: A Token-based Neural Synthesizer for Instrument Cloning and Text-to-Instrument}, 
       author={Kyungsu Kim and Junghyun Koo and Sungho Lee and Haesun Joung and Kyogu Lee},
@@ -84,7 +85,7 @@ If you want to manually download the weights, you can find them here:
       primaryClass={cs.SD},
       url={https://arxiv.org/abs/2502.08939}, 
 }
-
+```
 ## LICENSE
 
 This project is released under the [MIT License](./LICENSE)
