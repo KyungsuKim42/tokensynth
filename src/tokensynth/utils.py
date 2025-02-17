@@ -155,27 +155,3 @@ def download_model(model_name):
         hf_hub_download(repo_id="KyungsuKim/TokenSynth", filename=filename, local_dir=cache_dir)
 
     return ckpt_path
-
-# def download_model(model_name):
-#     # Download the specified model checkpoint if it doesn't exist locally.
-#     # If found locally, just return the local path.
-#     if model_name == 'clap':
-#         filename = "clap_music_audioset_epoch_15_esc_90.14.pt"
-#     elif model_name == 'dac':
-#         filename = "dac_weights_44khz_8kbps_0.0.1.pt"
-#     elif model_name == 'token_synth':
-#         filename = "token_synth.pt"
-#     elif model_name == 'token_synth_aug':
-#         filename = "token_synth_aug.pt"
-#     elif model_name == 'token_synth_unconditional':
-#         filename = "token_synth_unconditional.pt"
-#     else:
-#         raise ValueError(f"Unknown model: {model_name}")
-    
-#     ckpt_path = Path(__file__).parent.parent.parent / "ckpts" / filename
-#     if not ckpt_path.exists():
-#         os.makedirs(ckpt_path.parent, exist_ok=True)
-#         print(f"{filename} not found locally. Downloading from Hugging Face...")
-#         ckpt_path = hf_hub_download(repo_id="KyungsuKim/TokenSynth", filename=filename, local_dir="ckpts")
-#         ckpt_path = Path(ckpt_path)
-#     return ckpt_path
