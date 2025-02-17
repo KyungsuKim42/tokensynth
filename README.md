@@ -67,17 +67,23 @@ audiofile.write("media/output_audio_text.wav", audio_audio_text.cpu().numpy(), 1
 
 You can also run `python quickstart.py` from the project root directory.
 
+## Model Weights
+TokenSynth automatically downloads pretrained weights when initialized.  
+If you want to manually download the weights, you can find them here:  
+
+[🔗 TokenSynth Pretrained Weights](https://huggingface.co/KyungsuKim/TokenSynth/tree/main)
+
 ## Citation
 
-A formal citation (BibTeX) will be available once this work is published.
-
-For now, please cite this repository as:
-
-```markdown
-Kyungsu Kim, Junghyun Koo, Sungho Lee, Haesun Joung, Kyogu Lee.
-TokenSynth: A Token-Based Neural Synthesizer for Instrument Cloning and Text-to-Instrument.
-GitHub repository, 2024. Available at: https://github.com/kyungsukim42/tokensynth
-```
+@misc{kim2025tokensynthtokenbasedneuralsynthesizer,
+      title={TokenSynth: A Token-based Neural Synthesizer for Instrument Cloning and Text-to-Instrument}, 
+      author={Kyungsu Kim and Junghyun Koo and Sungho Lee and Haesun Joung and Kyogu Lee},
+      year={2025},
+      eprint={2502.08939},
+      archivePrefix={arXiv},
+      primaryClass={cs.SD},
+      url={https://arxiv.org/abs/2502.08939}, 
+}
 
 ## LICENSE
 
