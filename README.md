@@ -9,7 +9,7 @@
 
 [Kyungsu Kim](https://scholar.google.com/citations?user=bCMZWFIAAAAJ&hl=en&oi=sra), [Junghyun Koo](https://scholar.google.com/citations?user=9LbxECcAAAAJ&hl=en), [Sungho Lee](https://scholar.google.com/citations?hl=en&user=8yMXL5AAAAAJ), [Haesun Joung](https://scholar.google.com/citations?hl=en&user=yV8xVKoAAAAJ), [Kyogu Lee](https://scholar.google.com/citations?user=Fk4jQFEAAAAJ&hl=en)
 
-📄 Paper (In Press) | 🎵 [Demo Page](http://tinyurl.com/tokensynth-demo)
+📄 [Paper](https://arxiv.org/abs/2502.08939) | 🎵 [Demo Page](http://tinyurl.com/tokensynth-demo)
 
 
 </div>
@@ -39,7 +39,7 @@ midi = "media/input_midi.mid"
 
 # Initialize models
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-synth = TokenSynth.from_pretrained(aug=True)
+synth = TokenSynth.from_pretrained(aug=True, device=device)
 clap = CLAP(device=device)
 decoder = DACDecoder(device=device)
 
