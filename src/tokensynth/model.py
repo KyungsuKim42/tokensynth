@@ -146,7 +146,7 @@ class TokenSynth(nn.Module):
         logit = self.forward(tokens[:, :midi_len+1], clap_embedding, use_cache=False)[:, -1, :]
         
         max_gen_length = min(midi_len+451, self.hparams.max_len-1)  # Prevent overflow
-        for i in tqdm(range(midi_len+1, max_gen_length), desc="Synthesizing"):
+        for i in tqdm(range(midi_len+1, max_gen_length), desc="Synthesizing", leave=False):
             # Apply first note guidance
             if guidance_scale:
                 is_silence = logit[:, self.hparams.midi_vocab_size:self.hparams.midi_vocab_size+569].argmax().item() == 569
