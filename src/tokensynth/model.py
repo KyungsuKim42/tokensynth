@@ -95,8 +95,6 @@ class TokenSynth(nn.Module):
             TokenSynth: Initialized model with loaded weights
         """
         model = cls(device=device)
-        script_dir = Path(__file__).resolve().parent
-        local_ckpts_dir = script_dir / "../../ckpts"
 
         if path:
             checkpoint_path = Path(path)
@@ -108,7 +106,7 @@ class TokenSynth(nn.Module):
         model.load_state_dict(torch.load(checkpoint_path, map_location=device), strict=False)
         return model
     
-    def synthesize(self, clap_embedding, midi_fname, top_p=None, top_k=None, guidance_scale=None):
+    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None):
         """Generate audio tokens from MIDI input with optional guidance.
         
         Args:
@@ -141,12 +139,18 @@ class TokenSynth(nn.Module):
         tokens = torch.zeros((1, self.hparams.max_len, 10), device=self.device).long()
         tokens[0, :midi_len, 0] = midi_tokens[0]
 
-        # Generation loop
+        if context_tokens is not None:
+            tokens[0, midi_len+1:midi_len+1+context_tokens.shape[1], 1:] = context_tokens
+            prefix_len = midi_len+1+context_tokens.shape[1]
+        else:
+            prefix_len = midi_len
+
+        # Generation loop   
         self.count = 0  # Tracks guided steps
-        logit = self.forward(tokens[:, :midi_len+1], clap_embedding, use_cache=False)[:, -1, :]
+        logit = self.forward(tokens[:, :prefix_len], clap_embedding, use_cache=False)[:, -1, :]
         
-        max_gen_length = min(midi_len+451, self.hparams.max_len-1)  # Prevent overflow
-        for i in tqdm(range(midi_len+1, max_gen_length), desc="Synthesizing", leave=False):
+        max_gen_length = min(prefix_len+451, self.hparams.max_len-1)  # Prevent overflow
+        for i in tqdm(range(prefix_len+1, max_gen_length), desc="Synthesizing", leave=False):
             # Apply first note guidance
             if guidance_scale:
                 is_silence = logit[:, self.hparams.midi_vocab_size:self.hparams.midi_vocab_size+569].argmax().item() == 569
@@ -170,7 +174,7 @@ class TokenSynth(nn.Module):
             logit = self.forward(tokens[:, i:i+1], use_cache=True)[:, -1, :]
 
         # Process output tokens
-        audio_tokens = tokens[:, midi_len+1:i, 1:]
+        audio_tokens = tokens[:, prefix_len+1:i, 1:]
         return utils.post_process_audio_tokens(audio_tokens)
     
     def forward(self, x, clap_embedding=None, use_cache=False):
@@ -284,7 +288,56 @@ class TokenSynthUnconditional(TokenSynth):
         self.device = device or torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.sos_tok_embed = nn.Embedding(1, self.hparams.embed_dim)
         self.to(self.device)
+
+    @classmethod
+    def from_pretrained(cls, path=None, device=None):
+        """Load pretrained model from checkpoint.
+        
+        Args:
+            path (str, optional): Local path to checkpoint file
+            device (torch.device, optional): Target computation device
+            
+        Returns:
+            TokenSynth: Initialized model with loaded weights
+        """
+        model = cls(device=device)
+
+        if path:
+            checkpoint_path = Path(path)
+        else:
+            checkpoint_path = utils.download_model('token_synth_unconditional')
+
+        print(f"Loading checkpoint from {checkpoint_path}...")
+        model.load_state_dict(torch.load(checkpoint_path, map_location=device), strict=False)
+        return model
     
+    def synthesize(self, x, use_cache=False):
+        """ Autoregressively generate audio tokens from input tokens.
+        
+        Args:
+            x (torch.Tensor): Input tokens [batch_size, seq_len, 10], Delay pattern should be applied.
+            use_cache (bool): Enable KV caching
+        """
+        self.eval()
+        tokens = torch.zeros((1, self.hparams.max_len, 10), device=self.device).long()
+        tokens[0, :x.shape[1], 1:] = x
+
+        i = x.shape[1]
+        logit = self.forward(tokens[:, :i], use_cache=False)[:, -1, :]
+        max_steps = self.hparams.max_len - i
+        for _ in tqdm(range(max_steps), desc="Synthesizing"):
+            next_token = utils.sample(logit, top_p=0.95, midi_vocab_size=self.hparams.midi_vocab_size, audio_vocab_size=self.hparams.audio_vocab_size)
+            if (next_token == 0).all():  # End token
+                break
+            logit = self.forward(next_token, use_cache=True)[:, -1, :]
+            tokens[0, i, :] = next_token
+            i += 1
+            
+        # Process output tokens
+        audio_tokens = tokens[:, :i, 1:]
+        return utils.post_process_audio_tokens(audio_tokens)
+
+
     def forward(self, x, use_cache=False):
         """Forward pass with SOS token for unconditional generation.
         
