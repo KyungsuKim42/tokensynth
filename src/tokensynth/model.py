@@ -106,7 +106,7 @@ class TokenSynth(nn.Module):
         model.load_state_dict(torch.load(checkpoint_path, map_location=device), strict=False)
         return model
     
-    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None):
+    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False):
         """Generate audio tokens from MIDI input with optional guidance.
         
         Args:
@@ -115,7 +115,7 @@ class TokenSynth(nn.Module):
             top_p (float, optional): Nucleus sampling probability
             top_k (int, optional): Top-k sampling cutoff
             guidance_scale (float, optional): Strength of unconditional guidance
-            
+            return_context_tokens (bool): Whether to return context tokens together with generated tokens
         Returns:
             torch.Tensor: Generated audio tokens [batch_size, seq_len, 9]
             
@@ -174,7 +174,10 @@ class TokenSynth(nn.Module):
             logit = self.forward(tokens[:, i:i+1], use_cache=True)[:, -1, :]
 
         # Process output tokens
-        audio_tokens = tokens[:, prefix_len+1:i, 1:]
+        if return_context_tokens:   
+            audio_tokens = tokens[:, midi_len+1:i, 1:]
+        else:
+            audio_tokens = tokens[:, prefix_len+1:i, 1:]
         return utils.post_process_audio_tokens(audio_tokens)
     
     def forward(self, x, clap_embedding=None, use_cache=False):
