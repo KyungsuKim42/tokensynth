@@ -106,7 +106,7 @@ class TokenSynth(nn.Module):
         model.load_state_dict(torch.load(checkpoint_path, map_location=device), strict=False)
         return model
     
-    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False):
+    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False, temperature=1.0):
         """Generate audio tokens from MIDI input with optional guidance.
         
         Args:
@@ -116,6 +116,7 @@ class TokenSynth(nn.Module):
             top_k (int, optional): Top-k sampling cutoff
             guidance_scale (float, optional): Strength of unconditional guidance
             return_context_tokens (bool): Whether to return context tokens together with generated tokens
+            temperature (float): Temperature for sampling
         Returns:
             torch.Tensor: Generated audio tokens [batch_size, seq_len, 9]
             
@@ -164,7 +165,8 @@ class TokenSynth(nn.Module):
                 top_p=top_p,
                 top_k=top_k,
                 midi_vocab_size=self.hparams.midi_vocab_size,
-                audio_vocab_size=self.hparams.audio_vocab_size
+                audio_vocab_size=self.hparams.audio_vocab_size,
+                temperature=temperature
             )
             
             if (next_token == 0).all():  # End token
