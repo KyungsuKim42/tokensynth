@@ -110,9 +110,9 @@ def sample(logits, top_p=None, top_k=None, midi_vocab_size=None, audio_vocab_siz
         return sampled_indices
 
     if top_p is not None:
-        return top_p_sampling(logits, top_p, midi_vocab_size, audio_vocab_size)
+        return top_p_sampling(logits, top_p, midi_vocab_size, audio_vocab_size, temperature)
     elif top_k is not None:
-        return top_k_sampling(logits, top_k, midi_vocab_size, audio_vocab_size)
+        return top_k_sampling(logits, top_k, midi_vocab_size, audio_vocab_size, temperature)
     else:
         raise ValueError("Either top_p or top_k must be provided.")
 
