@@ -106,7 +106,7 @@ class TokenSynth(nn.Module):
         model.load_state_dict(torch.load(checkpoint_path, map_location=device), strict=False)
         return model
     
-    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False, temperature=1.0):
+    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False, temperature=1.0, fnt=True):
         """Generate audio tokens from MIDI input with optional guidance.
         
         Args:
@@ -117,6 +117,7 @@ class TokenSynth(nn.Module):
             guidance_scale (float, optional): Strength of unconditional guidance
             return_context_tokens (bool): Whether to return context tokens together with generated tokens
             temperature (float): Temperature for sampling
+            fnt (bool): Whether to use first note temperature
         Returns:
             torch.Tensor: Generated audio tokens [batch_size, seq_len, 9]
             
@@ -125,6 +126,7 @@ class TokenSynth(nn.Module):
         """
         # Input validation
         assert top_p or top_k, "Must provide either top_p or top_k for sampling"
+        input_temp = temperature
         
         if guidance_scale and not hasattr(self, 'unconditional_model'):
             print("Loading unconditional model for guidance...")
@@ -148,17 +150,24 @@ class TokenSynth(nn.Module):
 
         # Generation loop   
         self.count = 0  # Tracks guided steps
+        self.fnt_count = 0
         logit = self.forward(tokens[:, :prefix_len], clap_embedding, use_cache=False)[:, -1, :]
-        
+
         max_gen_length = min(prefix_len+451, self.hparams.max_len-1)  # Prevent overflow
         for i in tqdm(range(prefix_len+1, max_gen_length), desc="Synthesizing", leave=False):
             # Apply first note guidance
             if guidance_scale:
-                is_silence = logit[:, self.hparams.midi_vocab_size:self.hparams.midi_vocab_size+569].argmax().item() == 569
+                is_silence = logit[:, self.hparams.midi_vocab_size:self.hparams.midi_vocab_size+1024].argmax().item() == 569
                 if not is_silence and self.count < 9:
                     self.count += 1
                     logit = self.apply_first_note_guidance(logit, guidance_scale, midi_len, i, tokens)
-            
+            if fnt:
+                is_silence = logit[:, self.hparams.midi_vocab_size:self.hparams.midi_vocab_size+1024].argmax().item() == 569
+                if not is_silence and self.fnt_count < 9:
+                    self.fnt_count += 1
+                    temperature = input_temp
+                else:
+                    temperature = 1.0
             # Sample next token
             next_token = utils.sample(
                 logit, 
