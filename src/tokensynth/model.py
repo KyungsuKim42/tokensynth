@@ -106,7 +106,7 @@ class TokenSynth(nn.Module):
         model.load_state_dict(torch.load(checkpoint_path, map_location=device), strict=False)
         return model
     
-    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False, temperature=1.0, fnt=True):
+    def synthesize(self, clap_embedding, midi_fname, context_tokens=None, top_p=None, top_k=None, guidance_scale=None, return_context_tokens=False, temperature=1.0, fnt=False):
         """Generate audio tokens from MIDI input with optional guidance.
         
         Args:
@@ -146,7 +146,7 @@ class TokenSynth(nn.Module):
             tokens[0, midi_len+1:midi_len+1+context_tokens.shape[1], 1:] = context_tokens
             prefix_len = midi_len+1+context_tokens.shape[1]
         else:
-            prefix_len = midi_len
+            prefix_len = midi_len+1
 
         # Generation loop   
         self.count = 0  # Tracks guided steps
@@ -177,7 +177,7 @@ class TokenSynth(nn.Module):
                 audio_vocab_size=self.hparams.audio_vocab_size,
                 temperature=temperature
             )
-            
+
             if (next_token == 0).all():  # End token
                 break
                 
