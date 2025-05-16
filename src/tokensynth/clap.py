@@ -1,3 +1,4 @@
+import numpy as np
 import laion_clap
 from pathlib import Path
 import librosa
@@ -44,18 +45,26 @@ class CLAP:
         # Set model to evaluation mode
         self.clap.eval()
 
-    def encode_audio(self, audio_fname):
+    def encode_audio(self, audio):
         """
         Load an audio file, downsample to 16kHz, then upsample to 48kHz and retrieve the CLAP audio embedding.
         
         Args:
-            audio_fname (str): Path to the audio file.
+            audio (str, torch.Tensor, np.ndarray): Audio data.
         
         Returns:
             torch.Tensor: A tensor containing the audio embedding.
         """
         # Load audio at 16kHz, then resample to 48kHz
-        audio, sr = librosa.load(audio_fname, sr=16000)
+        if isinstance(audio, str):
+            audio, sr = librosa.load(audio, sr=16000)
+        elif isinstance(audio, torch.Tensor):
+            audio = audio.cpu().numpy()
+        elif isinstance(audio, np.ndarray):
+            audio = audio
+        else:
+            raise ValueError("audio must be a string or a torch.Tensor")
+
         audio = librosa.resample(audio, orig_sr=16000, target_sr=48000)
         
         # Convert audio data to a tensor and move it to the device

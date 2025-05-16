@@ -112,6 +112,7 @@ ckpts/**
 *.mid
 !media/reference_audio.wav
 !media/input_midi.mid
+media/output/
 
 # .npy files.
 *.npy
